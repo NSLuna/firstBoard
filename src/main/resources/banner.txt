@@ -1,0 +1,6 @@
+${AnsiColor.BRIGHT_CYAN}${AnsiStyle.BOLD}
+   /\ _ /\         L U N A
+  ( o . o )   | Boot ${spring-boot.version}
+  /  >^<  \
+${AnsiStyle.NORMAL}${AnsiColor.DEFAULT}
+src/main/resources/application.properties
