@@ -14,7 +14,7 @@
 <!--</body>-->
 <!--</html>-->
 
-<!DOCTYPE html>
+<!--<!DOCTYPE html> 작동됬던버전
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>로그인</title></head>
@@ -32,5 +32,106 @@
   </form>
   <a href="/oauth2/authorization/google" class="btn btn-primary">구글로 로그인</a>
 </main>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>로그인</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: "Nunito", sans-serif;
+      margin: 0;
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+      padding: 30px;
+      width: min(400px, 92vw);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+    .field {
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    label { font-size: 14px; font-weight: 600; color:#374151; }
+    input {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 15px;
+    }
+    .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 6px;
+    }
+    .btn-primary {
+      background: #7c83ff;
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(124,131,255,.3);
+    }
+    .btn-primary:hover { filter: brightness(1.05); }
+    .btn-ghost {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      color: #374151;
+    }
+    .links {
+      text-align: center;
+      margin-top: 14px;
+      font-size: 14px;
+    }
+    .links a {
+      color: #7c83ff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>로그인</h1>
+  <form method="post" action="/login">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+    <div class="field">
+      <label for="username">이메일</label>
+      <input id="username" type="email" name="username" placeholder="you@example.com" required>
+    </div>
+    <div class="field">
+      <label for="password">비밀번호</label>
+      <input id="password" type="password" name="password" placeholder="••••••••" required>
+    </div>
+    <button class="btn btn-primary" type="submit">🌸 로그인</button>
+  </form>
+  <button onclick="location.href='/oauth2/authorization/google'" class="btn btn-ghost">🟢 Google로 로그인</button>
+  <div class="links">
+    <a href="/join">회원가입</a>
+  </div>
+</div>
 </body>
 </html>

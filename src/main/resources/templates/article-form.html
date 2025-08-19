@@ -27,6 +27,8 @@
 <!--</body>-->
 <!--</html>-->
 
+<!--
+==================================실습용 코드=====================
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -51,8 +53,110 @@
         </label>
     </div>
     <button type="button" id="create-btn">저장</button>
-    <a href="/articles">목록</a>
+    <a href="/blog">목록</a>
 </form>
 <script src="/js/article.js" defer></script>
+</body>
+</html>
+-->
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>새 글 작성</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        :root{
+          --bg:#f8fafc;
+          --card:#ffffff;
+          --ink:#1f2937;
+          --muted:#6b7280;
+          --brand:#7c83ff;
+          --brand-2:#ffc8dd;
+          --brand-3:#bde0fe;
+          --radius:18px;
+          --shadow:0 10px 30px rgba(31,41,55,.08);
+        }
+        body{
+          margin:0;
+          font-family:"Pretendard",sans-serif;
+          background:var(--bg);
+          color:var(--ink);
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          min-height:100vh;
+        }
+        .card{
+          background:var(--card);
+          border-radius:var(--radius);
+          box-shadow:var(--shadow);
+          padding:28px;
+          width:min(600px, 92%);
+          display:grid;
+          gap:18px;
+        }
+        h1{
+          margin:0;
+          font-size:24px;
+          font-weight:700;
+          text-align:center;
+        }
+        .field{display:grid;gap:6px}
+        .input, textarea{
+          border:1px solid #e5e7eb;
+          border-radius:12px;
+          padding:12px;
+          font-size:15px;
+          resize:vertical;
+        }
+        .row{
+          display:flex;
+          justify-content:flex-end;
+          gap:10px;
+        }
+        .btn{
+          appearance:none;
+          border:0;
+          background:var(--brand);
+          color:#fff;
+          padding:10px 16px;
+          border-radius:12px;
+          font-weight:700;
+          cursor:pointer;
+          box-shadow:var(--shadow);
+        }
+        .btn-ghost{
+          background:#fff;
+          color:var(--ink);
+          border:1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+<form class="card" method="post" th:action="@{/articles}">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    <h1>새 글 작성 ✍️</h1>
+    <input type="hidden" id="article-id" th:value="${article} != null ? ${article.id} : ''" />
+
+    <div class="field">
+        <label for="title">제목</label>
+        <input class="input" type="text" id="title" name="title" placeholder="제목을 입력하세요" required>
+    </div>
+
+    <div class="field">
+        <label for="content">내용</label>
+        <textarea class="input" id="content" name="content" rows="8" placeholder="내용을 입력하세요" required></textarea>
+    </div>
+
+    <div class="row">
+        <a class="btn btn-ghost" th:href="@{/blog}">취소</a>
+        <button class="btn" type="submit">저장</button>
+    </div>
+</form>
 </body>
 </html>

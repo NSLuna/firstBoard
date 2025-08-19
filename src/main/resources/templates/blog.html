@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FirstBoard — 블로그</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        :root{
+          --bg:#f8fafc;
+          --card:#ffffff;
+          --ink:#1f2937;
+          --muted:#6b7280;
+          --brand:#7c83ff;
+          --brand-2:#ffc8dd;
+          --brand-3:#bde0fe;
+          --radius:18px;
+          --shadow:0 10px 30px rgba(31,41,55,.08);
+        }
+        html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:"Pretendard",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+        *{box-sizing:border-box}
+
+        .header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.8);backdrop-filter:blur(8px);border-bottom:1px solid #eef2f7}
+        .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 18px}
+        .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-family:"Nunito",sans-serif;letter-spacing:.2px}
+        .brand-badge{width:34px;height:34px;border-radius:12px;background:linear-gradient(135deg,var(--brand-2),var(--brand-3));display:grid;place-items:center;box-shadow:var(--shadow)}
+        .brand-badge span{font-size:18px}
+        .nav{display:flex;gap:14px;align-items:center}
+        .btn{appearance:none;border:0;background:var(--brand);color:#fff;padding:10px 14px;border-radius:14px;font-weight:700;box-shadow:var(--shadow);cursor:pointer;transition:transform .05s ease, filter .2s}
+        .btn:hover{filter:brightness(1.05)}
+        .btn:active{transform:translateY(1px)}
+        .btn-ghost{background:#fff;color:var(--ink);border:1px solid #e5e7eb}
+
+        .container{max-width:1100px;margin:26px auto;padding:0 18px;display:grid;grid-template-columns:1.8fr .8fr;gap:22px}
+        @media(max-width:900px){.container{grid-template-columns:1fr}}
+
+        .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow)}
+        .card.pad{padding:18px}
+
+        .hero{display:flex;align-items:center;gap:18px;padding:22px;background:linear-gradient(120deg,#fff,#f2f7ff)}
+        .hero .emoji{font-size:28px}
+        .hero h1{margin:0;font-size:26px}
+        .hero p{margin:6px 0 0;color:var(--muted)}
+
+        .posts{display:grid;gap:16px}
+        .post{display:grid;grid-template-columns:110px 1fr;gap:16px;padding:14px;border:1px solid #eef2f7;border-radius:14px;transition:transform .06s ease,box-shadow .2s}
+        .post:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(31,41,55,.06)}
+        .thumb{height:90px;border-radius:12px;background:linear-gradient(135deg,var(--brand-3),var(--brand-2));display:grid;place-items:center;color:#334155;font-weight:800}
+        .post h3{margin:2px 0 6px;font-size:18px}
+        .meta{display:flex;gap:10px;color:var(--muted);font-size:13px}
+        .tags{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+        .tag{font-size:12px;color:#374151;background:#f3f4f6;border:1px solid #e5e7eb;padding:4px 8px;border-radius:999px}
+
+        .profile{display:flex;gap:12px;align-items:center}
+        .avatar{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--brand-2),var(--brand));display:grid;place-items:center;color:#fff;font-weight:800}
+        .sidebar .section+ .section{margin-top:16px}
+
+        .fab{position:fixed;right:20px;bottom:20px;background:var(--brand);color:#fff;border:0;border-radius:999px;padding:14px 18px;font-weight:800;box-shadow:var(--shadow);cursor:pointer}
+        .fab:hover{filter:brightness(1.05)}
+    </style>
+</head>
+<body>
+<!-- 헤더 -->
+<header class="header">
+    <div class="header-inner">
+        <div class="brand">
+            <div class="brand-badge"><span>🌷</span></div>
+            <div>FirstBoard</div>
+        </div>
+        <div class="search">
+            <input class="input" type="search" placeholder="검색: 제목, 태그..." name="q" th:value="${param.q}">
+        </div>
+        <nav class="nav">
+            <a class="btn btn-ghost" th:href="@{/}">홈</a>
+        </nav>
+    </div>
+</header>
+
+<!-- 메인 -->
+<main class="container">
+    <!-- 글 목록 -->
+    <section>
+        <div class="card hero">
+            <div class="emoji">📝</div>
+            <div>
+                <h1>가볍기를 바라는 블로그</h1>
+                <p>오늘의 기록을 남겨보자 ✨</p>
+            </div>
+        </div>
+
+        <div class="posts">
+            <a class="card post" th:each="post : ${posts}" th:href="@{'/articles/' + ${post.id}}">
+                <div class="thumb" th:text="${#lists.isEmpty(post.tags) ? 'POST' : post.tags.get(0)}">DEV</div>
+                <div>
+                    <h3 th:text="${post.title}">게시글 제목</h3>
+                    <div class="meta">
+                        <span th:text="${post.author}">작성자</span>
+                        <span>·</span>
+                        <span th:text="${#temporals.format(post.createdAt, 'yyyy.MM.dd')}">2025.08.01</span>
+                    </div>
+                    <div class="tags" th:if="${!#lists.isEmpty(post.tags)}">
+                        <span class="tag" th:each="t: ${post.tags}" th:text="${t}">spring</span>
+                    </div>
+                </div>
+            </a>
+
+            <article class="card post" th:if="${posts == null or #lists.isEmpty(posts)}">
+                <div class="thumb">NEW</div>
+                <div>
+                    <h3>첫 글을 작성해보세요!</h3>
+                    <div class="meta"><span>아직 게시글이 없어요</span></div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- 오른쪽: 사이드바 -->
+    <aside class="sidebar">
+        <div class="card pad section">
+            <div class="profile">
+                <div class="avatar">🍀</div>
+                <div>
+                    <div style="font-weight:700"
+                         th:text="${#authentication.name != 'anonymousUser' ? #authentication.name : '방문자'}">방문자</div>
+                    <div class="a-muted">기록하는 개발자</div>
+                </div>
+            </div>
+
+            <!-- 로그인/회원가입 or 로그아웃 -->
+            <div style="margin-top:12px">
+                <!-- 로그인 전 -->
+                <div sec:authorize="isAnonymous()"
+                     style="display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap">
+                    <a class="btn" th:href="@{/login}">🌸 로그인</a>
+                    <a class="btn btn-ghost" th:href="@{/join}">✨ 회원가입</a>
+                </div>
+
+                <!-- 로그인 후 -->
+                <div sec:authorize="isAuthenticated()"
+                     style="display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap">
+                    <form th:action="@{/logout}" method="post" style="margin:0">
+                        <button type="submit" class="btn btn-ghost">🚪 로그아웃</button>
+                    </form>
+                    <a class="btn" th:href="@{/articles/new}">✍️ 새 글</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card pad section">
+            <h4 style="margin:0 0 10px 0">태그</h4>
+            <div class="tags">
+                <a class="tag" href="#">spring</a>
+                <a class="tag" href="#">java</a>
+                <a class="tag" href="#">docker</a>
+                <a class="tag" href="#">postgres</a>
+            </div>
+        </div>
+
+        <div class="card pad section">
+            <h4 style="margin:0 0 8px 0">바로가기</h4>
+            <div style="display:grid;gap:8px">
+                <a class="a-muted" th:href="@{/blog}">🏠 블로그 홈</a>
+                <a class="a-muted" th:href="@{/about}">ℹ️ 소개</a>
+            </div>
+        </div>
+    </aside>
+
+</main>
+
+<!-- 푸터 -->
+<footer class="card pad" style="max-width:1100px;margin:26px auto 40px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <span class="a-muted">© 2025 FirstBoard</span>
+        <span class="a-muted">Made with 🌸 & Spring</span>
+    </div>
+</footer>
+
+<!-- floating action button -->
+<a class="fab" th:href="@{/articles/new}">✍️ 새 글</a>
+</body>
+</html>

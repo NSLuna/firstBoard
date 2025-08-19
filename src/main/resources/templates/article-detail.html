@@ -25,44 +25,116 @@
 <!--</body>-->
 <!--</html>-->
 
+<!--<!DOCTYPE html>-->
+<!--<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title th:text="${article.title}">게시글</title>-->
+<!--    <meta name="_csrf" th:content="${_csrf.token}">-->
+<!--    <meta name="_csrf_header" th:content="${_csrf.headerName}">-->
+<!--</head>-->
+<!--<body>-->
+<!--<header>-->
+<!--    <a href="/" class="brand">🌀 임시로고</a>-->
+<!--    <div>-->
+<!--      <span sec:authorize="isAnonymous()">-->
+<!--        <a href="/login">로그인</a>-->
+<!--        <a href="/join">회원가입</a>-->
+<!--      </span>-->
+<!--        <span sec:authorize="isAuthenticated()">-->
+<!--        <span>안녕하세요, <strong th:text="${displayName}"></strong>님!</span>-->
+<!--        <form method="post" action="/logout" style="display:inline;">-->
+<!--          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">-->
+<!--          <button type="submit">로그아웃</button>-->
+<!--        </form>-->
+<!--      </span>-->
+<!--    </div>-->
+<!--</header>-->
+<!--<main>-->
+<!--    <h1 th:text="${article.title}">제목</h1>-->
+<!--    <input type="hidden" id="article-id" th:value="${article.id}">-->
+<!--    <div th:text="${article.content}">내용</div>-->
+
+<!--    <div th:if="${isOwner}">-->
+<!--        <a th:href="@{'/articles/' + ${article.id} + '/edit'}" id="modify-btn-link">수정</a>-->
+<!--        <button id="delete-btn">삭제</button>-->
+<!--    </div>-->
+
+<!--    <p><a href="/blog">목록</a></p>-->
+<!--</main>-->
+<!--<script src="/js/article.js" defer></script>-->
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${article.title}">게시글</title>
-    <meta name="_csrf" th:content="${_csrf.token}">
-    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="|${article != null ? article.title : '글 상세'}|">글 상세</title>
+
+    <!-- CSRF (폼/JS에서 사용) -->
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+
+    <style>
+        :root{--bg:#f8fafc;--card:#fff;--ink:#1f2937;--muted:#6b7280;--brand:#7c83ff;--radius:18px;--shadow:0 10px 30px rgba(31,41,55,.08)}
+        body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,'Noto Sans KR',sans-serif}
+        .wrap{max-width:900px;margin:26px auto;padding:0 18px}
+        .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px}
+        .meta{color:var(--muted);font-size:14px;margin-top:6px}
+        .actions{display:flex;gap:10px;margin-top:16px}
+        .btn{appearance:none;border:0;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}
+        .btn-primary{background:var(--brand);color:#fff}
+        .btn-ghost{background:#fff;border:1px solid #e5e7eb}
+        .back{display:inline-block;margin:12px 0;color:var(--muted);text-decoration:none}
+        pre{white-space:pre-wrap;word-break:break-word;line-height:1.6}
+    </style>
 </head>
 <body>
-<header>
-    <a href="/" class="brand">🌀 임시로고</a>
-    <div>
-      <span sec:authorize="isAnonymous()">
-        <a href="/login">로그인</a>
-        <a href="/join">회원가입</a>
-      </span>
-        <span sec:authorize="isAuthenticated()">
-        <span>안녕하세요, <strong th:text="${displayName}"></strong>님!</span>
-        <form method="post" action="/logout" style="display:inline;">
-          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-          <button type="submit">로그아웃</button>
-        </form>
-      </span>
-    </div>
-</header>
-<main>
-    <h1 th:text="${article.title}">제목</h1>
-    <input type="hidden" id="article-id" th:value="${article.id}">
-    <div th:text="${article.content}">내용</div>
+<div class="wrap">
+    <a class="back" th:href="@{/blog}">← 블로그로 돌아가기</a>
 
-    <div th:if="${isOwner}">
-        <a th:href="@{'/articles/' + ${article.id} + '/edit'}" id="modify-btn-link">수정</a>
-        <button id="delete-btn">삭제</button>
-    </div>
+    <article class="card" th:if="${article != null}">
+        <h1 th:text="${article.title}">제목</h1>
 
-    <p><a href="/articles">목록</a></p>
-</main>
-<script src="/js/article.js" defer></script>
+        <div class="meta">
+            <!-- 작성자: name 없으면 email, 둘 다 없으면 익명 -->
+            <span th:text="${article.author != null ? (article.author.name != null ? article.author.name : (article.author.email != null ? article.author.email : '익명')) : '익명'}">작성자</span>
+            <span th:if="${article.createdAt != null}"
+                  th:text="${#temporals.format(article.createdAt,'yyyy.MM.dd HH:mm')}"></span>
+
+            <!-- 날짜: 라이브러리 없이도 안전하게 (원시값 출력) -->
+            <span th:if="${article.createdAt != null}"
+                  th:text="${article.createdAt}">2025-01-01T12:00</span>
+
+            <!-- ※ 만약 포맷팅 라이브러리 추가했다면 위 한 줄 대신 아래 두 줄 사용
+            <span th:if="${article.createdAt != null}"
+                  th:text="${#temporals.format(article.createdAt,'yyyy.MM.dd HH:mm')}">2025.01.01 12:00</span>
+            -->
+        </div>
+
+        <pre th:text="${article.content != null ? article.content : ''}" style="margin-top:16px">내용</pre>
+
+        <!-- 본인 글일 때만 수정/삭제 버튼 -->
+        <div class="actions" th:if="${isOwner}">
+            <a class="btn btn-ghost" th:href="@{'/articles/' + ${article.id} + '/edit'}">수정</a>
+
+            <!-- 삭제: CSRF 포함 -->
+            <form th:action="@{'/articles/' + ${article.id} + '/delete'}" method="post"
+                  onsubmit="return confirm('정말 삭제할까요?');">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button type="submit" class="btn btn-primary">삭제</button>
+            </form>
+        </div>
+    </article>
+
+    <div th:if="${article == null}">
+        존재하지 않는 글입니다.
+    </div>
+</div>
 </body>
 </html>
